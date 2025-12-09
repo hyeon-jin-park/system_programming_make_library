@@ -47,8 +47,8 @@
 
 #include <stdlib.h> // size_t 타입을 사용하기 위해 포함합니다.
 
-void xor_encrypt(char* data, size_t data_len, const char* key);
-void xor_decrypt(char* data, size_t data_len, const char* key);
+void xor_encrypt(char* data, const char* key);
+void xor_decrypt(char* data, const char* key);
 
 #endif // XOR_CIPHER_H
 ```
@@ -61,60 +61,45 @@ void xor_decrypt(char* data, size_t data_len, const char* key);
 #include <string.h>
 #include "xor_cipher.h"
 
-void xor_encrypt(char* data, size_t data_len, const char* key) {
+void xor_encrypt(char* data, const char* key) {
     if (data == NULL || key == NULL) return;
     size_t key_len = strlen(key);
     if (key_len == 0) return;
+    
+    size_t data_len = strlen(data);
     for (size_t i = 0; i < data_len; ++i) {
         data[i] ^= key[i % key_len];
     }
 }
 ```
 
-### `main.c` (Static Linking)
+### `main.c` (Static/Dynamic Linking)
 
-정적 라이브러리를 사용하는 메인 프로그램입니다.
-`xor_encrypt`와 `xor_decrypt` 함수를 사용하여 문자열을 암호화하고 복호화합니다.
-
+라이브러리를 사용하는 메인 프로그램입니다.
+dynamic 코드는 static과 메시지, 키 제외하고 동일합니다.
 ```c
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "xor_cipher.h"
-
-// ... (print_hex 함수 생략)
 
 int main() {
     char message[] = "Static Linking Test!";
-    size_t message_len = strlen(message);
     const char* secret_key = "StaticKey";
 
     printf("--- Static Library Test ---\n");
-    // ... (암호화 및 복호화 호출)
-    return 0;
-}
-```
+    printf("Original Text      : %s\n", message);
+    printf("\n");
 
-### `main.c` (Dynamic Linking)
+    printf("--- Encrypting ---\n");
+    xor_encrypt(message, secret_key);
+    printf("Encrypted Text     : %s\n", message);
+    printf("\n");
 
-동적 라이브러리를 사용하는 메인 프로그램입니다.
-코드는 정적 링킹과 거의 동일하지만, 컴파일 및 링크 방식이 다릅니다.
+    printf("--- Decrypting ---\n");
+    xor_decrypt(message, secret_key);
+    printf("Decrypted Text     : %s\n", message);
 
-```c
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "xor_cipher.h"
-
-// ... (print_hex 함수 생략)
-
-int main() {
-    char message[] = "Dynamic Linking Test!";
-    size_t message_len = strlen(message);
-    const char* secret_key = "DynamicKey";
-
-    printf("--- Shared Library Test ---\n");
-    // ... (암호화 및 복호화 호출)
     return 0;
 }
 ```
@@ -130,37 +115,60 @@ Runtime Linking에서 사용되는 main 코드입니다.
 #include <stdlib.h>
 #include <dlfcn.h>
 
-typedef void (*xor_func_t)(char*, size_t, const char*);
-
-// ... (print_hex 함수 생략)
-
 int main() {
+    void *handle;
+    void (*encrypt_func)(char*, const char*);
+    void (*decrypt_func)(char*, const char*);
+    char *error;
+
     char message[] = "Runtime Loading Test!";
-    // ...
+    const char* secret_key = "RuntimeKey";
 
-    // 1. 공유 라이브러리 로드
-    void* handle = dlopen("./libxor.so", RTLD_LAZY);
-    if (!handle) { /* 에러 처리 */ }
+    printf("--- Runtime Loading Test ---\n");
+    printf("Original Text      : %s\n", message);
+    printf("\n");
 
-    // 2. 함수 주소 찾기
-    xor_func_t encrypt_func = (xor_func_t)dlsym(handle, "xor_encrypt");
-    xor_func_t decrypt_func = (xor_func_t)dlsym(handle, "xor_decrypt");
+    handle = dlopen("./libxor.so", RTLD_LAZY);
+    if (!handle) {
+        fprintf(stderr, "%s\n", dlerror());
+        exit(1);
+    }
 
-    // 3. 함수 사용
-    encrypt_func(message, message_len, secret_key);
-    // ...
+    encrypt_func = dlsym(handle, "xor_encrypt");
+    if ((error = dlerror()) != NULL) {
+        fprintf(stderr, "%s\n", error);
+        exit(1);
+    }
 
-    // 4. 라이브러리 닫기
-    dlclose(handle);
+    decrypt_func = dlsym(handle, "xor_decrypt");
+    if ((error = dlerror()) != NULL) {
+        fprintf(stderr, "%s\n", error);
+        exit(1);
+    }
+
+    printf("--- Encrypting ---\n");
+    encrypt_func(message, secret_key);
+    printf("Encrypted Text     : %s\n", message);
+    printf("\n");
+
+    printf("--- Decrypting ---\n");
+    decrypt_func(message, secret_key);
+    printf("Decrypted Text     : %s\n", message);
+
+    if (dlclose(handle) < 0) {
+        fprintf(stderr, "%s\n", dlerror());
+        exit(1);
+    }
+
     return 0;
 }
 ```
 
 ---
 
-## 빌드 및 실행 방법
+## 빌드 및 실행
 
-각각의 링킹 방식에 따라 해당 디렉토리로 이동하여 아래의 명령어를 순서대로 실행하세요.
+각각의 링킹 방식에 따라 해당 디렉토리로 이동하여 아래의 명령어를 순서대로 실행합니다.
 
 ### 1. Static Linking
 
@@ -174,7 +182,7 @@ cd static
 gcc -c encrypt.c decrypt.c
 
 # 3. 정적 라이브러리(*.a) 생성
-ar rcs libxor.a encrypt.o decrypt.o
+ar rcs libxor.a encrypㅎt.o decrypt.o
 
 # 4. 메인 프로그램 컴파일 및 링크
 gcc main.c -L. -lxor -o main_static
