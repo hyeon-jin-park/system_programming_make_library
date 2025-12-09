@@ -243,4 +243,4 @@ export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 ./main_runtime
 ```
 
-![Runtime Linking Result](img/runtime.png)ort LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+![Runtime Linking Result](img/runtime.png)
