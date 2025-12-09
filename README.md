@@ -87,12 +87,7 @@ int main() {
     char message[] = "Static Linking Test!";
     const char* secret_key = "KeyStatic";
 
-    int main() {
-    char message[] = "Dynamic Linking Test!";
-    const char* secret_key = "KeyDynamic";
-
     printf("--- Static Library Test ---\n");
-}
     printf("Original Text      : %s\n", message);
     printf("\n");
 
