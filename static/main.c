@@ -12,11 +12,11 @@ void print_hex(const char* label, const char* data, size_t len) {
 }
 
 int main() {
-    char message[] = "Dynamic Linking Test!";
+    char message[] = "Static Linking Test!";
     size_t message_len = strlen(message);
-    const char* secret_key = "DynamicKey";
+    const char* secret_key = "StaticKey";
 
-    printf("--- Shared Library Test ---\n");
+    printf("--- Static Library Test ---\n");
     printf("Original Text      : %s\n", message);
     print_hex("Original (HEX)", message, message_len);
     printf("\n");
