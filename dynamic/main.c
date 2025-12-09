@@ -5,7 +5,7 @@
 
 int main() {
     char message[] = "Dynamic Linking Test!";
-    const char* secret_key = "DynamicKey";
+    const char* secret_key = "KeyDynamic";
 
     printf("--- Shared Library Test ---\n");
     printf("Original Text      : %s\n", message);

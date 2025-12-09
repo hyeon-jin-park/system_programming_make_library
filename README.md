@@ -85,9 +85,14 @@ dynamic 코드는 static과 메시지, 키 제외하고 동일합니다.
 
 int main() {
     char message[] = "Static Linking Test!";
-    const char* secret_key = "StaticKey";
+    const char* secret_key = "KeyStatic";
+
+    int main() {
+    char message[] = "Dynamic Linking Test!";
+    const char* secret_key = "KeyDynamic";
 
     printf("--- Static Library Test ---\n");
+}
     printf("Original Text      : %s\n", message);
     printf("\n");
 
@@ -122,7 +127,7 @@ int main() {
     char *error;
 
     char message[] = "Runtime Loading Test!";
-    const char* secret_key = "RuntimeKey";
+    const char* secret_key = "KeyRuntime";
 
     printf("--- Runtime Loading Test ---\n");
     printf("Original Text      : %s\n", message);

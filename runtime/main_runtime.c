@@ -11,7 +11,7 @@ int main() {
     char *error;
 
     char message[] = "Runtime Loading Test!";
-    const char* secret_key = "RuntimeKey";
+    const char* secret_key = "KeyRuntime";
 
     printf("--- Runtime Loading Test ---\n");
     printf("Original Text      : %s\n", message);
