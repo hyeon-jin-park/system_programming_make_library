@@ -5,7 +5,7 @@
 
 int main() {
     char message[] = "Static Linking Test!";
-    const char* secret_key = "StaticKey";
+    const char* secret_key = "KeyStatic";
 
     printf("--- Static Library Test ---\n");
     printf("Original Text      : %s\n", message);
