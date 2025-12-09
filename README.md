@@ -187,7 +187,7 @@ cd static
 gcc -c encrypt.c decrypt.c
 
 # 3. 정적 라이브러리(*.a) 생성
-ar rcs libxor.a encrypㅎt.o decrypt.o
+ar rcs libxor.a encrypt.o decrypt.o
 
 # 4. 메인 프로그램 컴파일 및 링크
 gcc main.c -L. -lxor -o main_static
@@ -195,6 +195,8 @@ gcc main.c -L. -lxor -o main_static
 # 5. 프로그램 실행
 ./main_static
 ```
+
+![Static Linking Result](img/static.png)
 
 ### 2. Dynamic Linking
 
@@ -218,6 +220,9 @@ export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 ./main_dynamic
 ```
 
+![Dynamic Linking Result](img/dynamic.png)
+
+
 ### 3. Runtime Linking (Dynamic Loading)
 
 프로그램이 실행 중에 `dlopen()` 함수를 사용하여 라이브러리를 직접 로드하는 방식입니다.
@@ -237,3 +242,5 @@ gcc main_runtime.c -ldl -o main_runtime
 export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 ./main_runtime
 ```
+
+![Runtime Linking Result](img/runtime.png)ort LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
